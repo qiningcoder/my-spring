@@ -174,6 +174,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	}
 
 	/**
+	 * 先从singletonObjects中获取单例bean,如果不是null就直接返回, 如果为null,则判断beanName是否在创建中,
+	 * 不是就直接返回null, 是的话,就从earlySingletonObjects(里面的bean都只是完成了实例化,没有填充属性呢)查找,
+	 * 如果不为null,就直接返回, 是null的话就去从singletonFactories获取objectFactory,在此时objectFactory肯定不为null
+	 * 调用getObject方法获取早期的bean,此时未完成属性填充 ,把早期的bean缓存到earlySingletonObjects,从singletonFactories
+	 * 移除,是因为以为可以走earlySingletonObjects而不用再次调用objectFactory的getObject方法,减少不必要的开销.
 	 * Return the (raw) singleton object registered under the given name.
 	 * <p>Checks already instantiated singletons and also allows for an early
 	 * reference to a currently created singleton (resolving a circular reference).
